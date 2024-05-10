@@ -114,7 +114,7 @@ class _LogInState extends State<LogIn> {
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(20)),
                       child: Form(
-                        key: _formkey,
+                        key: _authController.formKey,
                         child: Column(
                           children: [
                             const SizedBox(
@@ -128,7 +128,7 @@ class _LogInState extends State<LogIn> {
                               height: 20.0,
                             ),
                             TextFormField(
-                              controller: useremailcontroller,
+                              controller: _authController.emailController,
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
                                   return 'Please Enter Email';
@@ -144,7 +144,7 @@ class _LogInState extends State<LogIn> {
                               height: 30.0,
                             ),
                             TextFormField(
-                              controller: userpasswordcontroller,
+                              controller: _authController.passwordController,
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
                                   return 'Please Enter Password';
@@ -180,15 +180,20 @@ class _LogInState extends State<LogIn> {
                               height: 40.0,
                             ),
                             GestureDetector(
-                              onTap: () {
-                                if (_formkey.currentState!.validate()) {
+                              onTap: () async {
+                                /* if (_authController.formKey.currentState!
+                                    .validate()) {
                                   setState(() {
                                     email = useremailcontroller.text;
                                     password = userpasswordcontroller.text;
                                   });
-                                }
+                                } */
                                 //userLogin();
-                                _authController.login();
+                                await _authController.login();
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => BottomNav()));
                               },
                               child: Material(
                                 elevation: 5.0,

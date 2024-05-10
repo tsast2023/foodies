@@ -5,10 +5,12 @@ import 'package:flutter/material.dart';
 
 import 'package:image_picker/image_picker.dart';
 import 'package:random_string/random_string.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Controller/Auth/LoginController.dart';
 import '../service/auth.dart';
 import '../service/shared_pref.dart';
+import 'login.dart';
 
 class Profile extends StatefulWidget {
   const Profile({super.key});
@@ -18,7 +20,7 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
-  String? profile, name, email;
+  String profile = "", name = "", email = "";
   final ImagePicker _picker = ImagePicker();
   File? selectedImage;
 
@@ -46,14 +48,23 @@ class _ProfileState extends State<Profile> {
   }
 
   getthesharedpref() async {
-    profile = await SharedPreferenceHelper().getUserProfile();
-    name = await SharedPreferenceHelper().getUserName();
-    email = await SharedPreferenceHelper().getUserEmail();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    profile = prefs.getString("photo") ?? "";
+    prefs.getString("name") == null
+        ? name = ""
+        : name = prefs.getString("name")!;
+    email = prefs.getString("email")!;
     setState(() {});
   }
 
   onthisload() async {
-    await getthesharedpref();
+    // await getthesharedpref();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    profile = prefs.getString("photo") ?? "";
+    prefs.getString("name") == null
+        ? name = ""
+        : name = prefs.getString("name")!;
+    email = prefs.getString("email")!;
     setState(() {});
   }
 
@@ -66,16 +77,16 @@ class _ProfileState extends State<Profile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: name == null
-          ? CircularProgressIndicator()
+      body: email == ""
+          ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
               child: Column(
                 children: [
                   Stack(
                     children: [
                       Container(
-                        padding:
-                            EdgeInsets.only(top: 45.0, left: 20.0, right: 20.0),
+                        padding: const EdgeInsets.only(
+                            top: 45.0, left: 20.0, right: 20.0),
                         height: MediaQuery.of(context).size.height / 4.3,
                         width: MediaQuery.of(context).size.width,
                         decoration: BoxDecoration(
@@ -98,20 +109,21 @@ class _ProfileState extends State<Profile> {
                                       onTap: () {
                                         getImage();
                                       },
-                                      child: profile == ""
-                                          ? Image.asset(
-                                              "images/boy.jpg",
-                                              height: 120,
-                                              width: 120,
-                                              fit: BoxFit.cover,
-                                            )
-                                          : Image.network(
+                                      child: /*  profile == null
+                                          ? */
+                                          Image.asset(
+                                        "images/boy.png",
+                                        height: 120,
+                                        width: 120,
+                                        fit: BoxFit.cover,
+                                      )
+                                      /* : Image.network(
                                               profile!,
                                               height: 120,
                                               width: 120,
                                               fit: BoxFit.cover,
-                                            ),
-                                    )
+                                            ), */
+                                      )
                                   : Image.file(
                                       selectedImage!,
                                       height: 120,
@@ -123,13 +135,13 @@ class _ProfileState extends State<Profile> {
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.only(top: 70.0),
+                        padding: const EdgeInsets.only(top: 70.0),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              name!,
-                              style: TextStyle(
+                              name != null ? name! : "name",
+                              style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 23.0,
                                   fontWeight: FontWeight.bold,
@@ -140,16 +152,16 @@ class _ProfileState extends State<Profile> {
                       ),
                     ],
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 20.0,
                   ),
                   Container(
-                    margin: EdgeInsets.symmetric(horizontal: 20.0),
+                    margin: const EdgeInsets.symmetric(horizontal: 20.0),
                     child: Material(
                       borderRadius: BorderRadius.circular(10),
                       elevation: 2.0,
                       child: Container(
-                        padding: EdgeInsets.symmetric(
+                        padding: const EdgeInsets.symmetric(
                           vertical: 15.0,
                           horizontal: 10.0,
                         ),
@@ -158,17 +170,17 @@ class _ProfileState extends State<Profile> {
                             borderRadius: BorderRadius.circular(10)),
                         child: Row(
                           children: [
-                            Icon(
+                            const Icon(
                               Icons.person,
                               color: Colors.black,
                             ),
-                            SizedBox(
+                            const SizedBox(
                               width: 20.0,
                             ),
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
+                                const Text(
                                   "Name",
                                   style: TextStyle(
                                       color: Colors.black,
@@ -176,8 +188,8 @@ class _ProfileState extends State<Profile> {
                                       fontWeight: FontWeight.w600),
                                 ),
                                 Text(
-                                  name!,
-                                  style: TextStyle(
+                                  name != null ? name! : "name",
+                                  style: const TextStyle(
                                       color: Colors.black,
                                       fontSize: 16.0,
                                       fontWeight: FontWeight.w600),
@@ -189,16 +201,16 @@ class _ProfileState extends State<Profile> {
                       ),
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 30.0,
                   ),
                   Container(
-                    margin: EdgeInsets.symmetric(horizontal: 20.0),
+                    margin: const EdgeInsets.symmetric(horizontal: 20.0),
                     child: Material(
                       borderRadius: BorderRadius.circular(10),
                       elevation: 2.0,
                       child: Container(
-                        padding: EdgeInsets.symmetric(
+                        padding: const EdgeInsets.symmetric(
                           vertical: 15.0,
                           horizontal: 10.0,
                         ),
@@ -207,17 +219,17 @@ class _ProfileState extends State<Profile> {
                             borderRadius: BorderRadius.circular(10)),
                         child: Row(
                           children: [
-                            Icon(
+                            const Icon(
                               Icons.email,
                               color: Colors.black,
                             ),
-                            SizedBox(
+                            const SizedBox(
                               width: 20.0,
                             ),
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
+                                const Text(
                                   "Email",
                                   style: TextStyle(
                                       color: Colors.black,
@@ -226,7 +238,7 @@ class _ProfileState extends State<Profile> {
                                 ),
                                 Text(
                                   email!,
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                       color: Colors.black,
                                       fontSize: 16.0,
                                       fontWeight: FontWeight.w600),
@@ -238,23 +250,23 @@ class _ProfileState extends State<Profile> {
                       ),
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 30.0,
                   ),
                   Container(
-                    margin: EdgeInsets.symmetric(horizontal: 20.0),
+                    margin: const EdgeInsets.symmetric(horizontal: 20.0),
                     child: Material(
                       borderRadius: BorderRadius.circular(10),
                       elevation: 2.0,
                       child: Container(
-                        padding: EdgeInsets.symmetric(
+                        padding: const EdgeInsets.symmetric(
                           vertical: 15.0,
                           horizontal: 10.0,
                         ),
                         decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(10)),
-                        child: Row(
+                        child: const Row(
                           children: [
                             Icon(
                               Icons.description,
@@ -280,7 +292,7 @@ class _ProfileState extends State<Profile> {
                       ),
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 30.0,
                   ),
                   /* GestureDetector(
@@ -331,23 +343,25 @@ class _ProfileState extends State<Profile> {
                     height: 30.0,
                   ), */
                   GestureDetector(
-                    onTap: () {
-                      LogoutController().signOut(context);
+                    onTap: () async {
+                      await LogoutController().signOut(context);
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => LogIn()));
                     },
                     child: Container(
-                      margin: EdgeInsets.symmetric(horizontal: 20.0),
+                      margin: const EdgeInsets.symmetric(horizontal: 20.0),
                       child: Material(
                         borderRadius: BorderRadius.circular(10),
                         elevation: 2.0,
                         child: Container(
-                          padding: EdgeInsets.symmetric(
+                          padding: const EdgeInsets.symmetric(
                             vertical: 15.0,
                             horizontal: 10.0,
                           ),
                           decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(10)),
-                          child: Row(
+                          child: const Row(
                             children: [
                               Icon(
                                 Icons.logout,
